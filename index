@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Prep (Pon–Czw) | Jedzonko</title>
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-dark: #0f766e;
+      --primary-light: #ccfbf1;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      margin: 0;
+      padding: 32px 16px 80px 16px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .header {
+      background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+      color: #fff;
+      padding: 36px 32px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25);
+    }
+    .header h1 {
+      margin: 0 0 8px 0;
+      font-size: 26px;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      display: block;
+    }
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+    }
+    .prep-box {
+      background: #ffffff;
+      border: 2px solid #99f6e4;
+      border-radius: 18px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
+    }
+    .prep-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-top: 0;
+    }
+    .prep-steps {
+      padding-left: 20px;
+      margin-bottom: 0;
+      font-size: 14px;
+    }
+    .prep-steps li {
+      margin-bottom: 10px;
+    }
+    .day-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 26px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      page-break-inside: avoid;
+    }
+    .day-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .day-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .meal-block {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .meal-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+    .meal-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .meal-action {
+      font-size: 12px;
+      background: #e2e8f0;
+      color: var(--muted);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .recipe-text {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin: 8px 0;
+    }
+    .macro-strip {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .action-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(13, 148, 136, 0.35);
+      transition: all 0.2s ease;
+    }
+    .action-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .action-btn {
+        display: none;
+      }
+      .day-card {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Plan Żywieniowy Meal Prep (Pon–Czw)</h1>
+    <p>Zero gotowania w tygodniu • Zero papryki i cebuli • Rekompozycja i sytość</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-val">~118–122 g</span>
+        <span class="stat-label">Białko / dzień</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">~1350–1430</span>
+        <span class="stat-label">Kalorie (kcal)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">4 posiłki</span>
+        <span class="stat-label">Rytm dzienny</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">45 min</span>
+        <span class="stat-label">Niedzielny prep</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prep-box">
+    <div class="prep-title">⏱️ Plan Przygotowań w Niedzielę (Wszystko gotowe i obrane)</div>
+    <ol class="prep-steps">
+      <li><strong>Obiad 1 (Pon & Wt) – Garnek:</strong> Ugotuj 100 g ryżu basmati. W garnku na 2 łyżeczkach oliwy podsmaż 360 g kurczaka w kostce. Dodaj posiekaną marchewkę i cukinię, 250 ml passaty, sól, pieprz i zioła. Duś 12 minut. Rozlej do 2 pojemników.</li>
+      <li><strong>Obiad 2 (Śr & Czw) – Airfryer:</strong> Obierz 4 ziemniaki (400 g) i pokrój w kostkę. Pokrój 360 g filetu z indyka. Dodaj 200 g różyczek brokuła. Piecz na papierze w Airfryerze z 2 łyżeczkami oliwy przez 17 min w 190°C. Rozdziel do 2 pojemników.</li>
+      <li><strong>Śniadania w słoikach:</strong> Wymieszaj w słoiku owsiankę szarlotkową (na poniedziałek). W Thermomixie/blenderze zblenduj kaszę z serkiem wiejskim, kakao i bananem na krem (na środę).</li>
+      <li><strong>Obrane chrupkie warzywa:</strong> Obierz 4 marchewki i 2 ogórki, pokrój w słupki. Włóż do pojemnika z odrobiną zimnej wody na dnie (zachowają chrupkość do czwartku).</li>
+    </ol>
+  </div>
+
+  <!-- PONIEDZIAŁEK -->
+  <div class="day-card">
+    <div class="day-header"><span class="day-name">Poniedziałek</span></div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">1. Nocna owsianka „Szarlotka” ze Skyrem</span><span class="meal-action">Gotowe ze słoika</span></div>
+      <div class="recipe-text">Płatki owsiane (40 g), Skyr naturalny (150 g), małe tarte jabłko, cynamon, orzechy włoskie (10 g), 50 ml mleka.</div>
+      <div class="macro-strip">355 kcal | B: 22,5 g | T: 8,0 g | W: 48,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">2. Kurczak z cukinią i marchewką w passacie z ryżem (1/2)</span><span class="meal-action">Mikrofala 2.5 min</span></div>
+      <div class="recipe-text">Pierś z kurczaka (180 g), ryż basmati (50 g suchej masy), passata (125 ml), cukinia, marchewka, oliwa (1 łyżeczka).</div>
+      <div class="macro-strip">440 kcal | B: 43,0 g | T: 7,5 g | W: 50,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">3. Twarogowy puch z masłem orzechowym i borówkami</span><span class="meal-action">Pojemniczek z niedzieli</span></div>
+      <div class="recipe-text">Twaróg chudy (125 g), 2 łyżki jogurtu naturalnego, masło orzechowe (10 g), świeże borówki (50 g).</div>
+      <div class="macro-strip">220 kcal | B: 29,0 g | T: 6,5 g | W: 11,5 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">4. Roll-up z indykiem, mozzarellą light i obranymi warzywami</span><span class="meal-action">3 min Airfryer/grill</span></div>
+      <div class="recipe-text">Tortilla pełnoziarnista, szynka z indyka (60 g), mozzarella light (60 g), szpinak + gotowe słupki marchewki i ogórka.</div>
+      <div class="macro-strip">350 kcal | B: 28,0 g | T: 9,0 g | W: 38,0 g</div>
+    </div>
+  </div>
+
+  <!-- WTOREK -->
+  <div class="day-card">
+    <div class="day-header"><span class="day-name">Wtorek</span></div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">1. Zapiekany omlet ze szpinakiem i indykiem + pieczywo</span><span class="meal-action">Mikrofala 60 sek</span></div>
+      <div class="recipe-text">3 jajka, 30 g szynki z indyka, szpinak (upieczone w niedzielę) + kromka chleba żytniego (40 g).</div>
+      <div class="macro-strip">315 kcal | B: 24,0 g | T: 15,0 g | W: 20,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">2. Kurczak z cukinią i marchewką w passacie z ryżem (2/2)</span><span class="meal-action">Mikrofala 2.5 min</span></div>
+      <div class="recipe-text">Pierś z kurczaka (180 g), ryż basmati (50 g suchej masy), passata (125 ml), cukinia, marchewka, oliwa (1 łyżeczka).</div>
+      <div class="macro-strip">440 kcal | B: 43,0 g | T: 7,5 g | W: 50,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">3. Skyr z bananem i migdałami</span><span class="meal-action">Jesz z kubeczka</span></div>
+      <div class="recipe-text">Skyr waniliowy/naturalny (150 g), 1 mały banan (80 g), płatki migdałów (10 g).</div>
+      <div class="macro-strip">240 kcal | B: 19,5 g | T: 5,5 g | W: 28,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">4. Sałatka z jajkiem na twardo, fetą i obranymi warzywami</span><span class="meal-action">Jajka obrane z niedzieli</span></div>
+      <div class="recipe-text">2 ugotowane jajka, feta (35 g), miks sałat, gotowe słupki ogórka i marchewki, oliwa (1 łyżeczka), pieczywo chrupkie.</div>
+      <div class="macro-strip">325 kcal | B: 20,5 g | T: 18,5 g | W: 17,5 g</div>
+    </div>
+  </div>
+
+  <!-- ŚRODA -->
+  <div class="day-card">
+    <div class="day-header"><span class="day-name">Środa</span></div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">1. Krem jaglano-czekoladowy z Thermomixa/blendera</span><span class="meal-action">Gotowy ze słoika</span></div>
+      <div class="recipe-text">Kasza jaglana (40 g), serek wiejski lekki (100 g), kakao (5 g), 1/2 banana, 1 łyżeczka miodu.</div>
+      <div class="macro-strip">315 kcal | B: 23,0 g | T: 4,0 g | W: 46,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">2. Pieczony indyk z ziemniakami i brokułami (1/2)</span><span class="meal-action">Airfryer 3 min / Mikrofala</span></div>
+      <div class="recipe-text">Upieczony indyk (180 g), upieczone ziemniaki (200 g), pieczony brokuł (100 g), oliwa (1 łyżeczka).</div>
+      <div class="macro-strip">410 kcal | B: 44,0 g | T: 7,5 g | W: 41,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">3. Obrane słupki warzyw z hummusem</span><span class="meal-action">Zero zmywania</span></div>
+      <div class="recipe-text">Gotowe słupki marchewki i zielonego ogórka (150 g) maczane w klasycznym hummusie (40 g).</div>
+      <div class="macro-strip">175 kcal | B: 5,0 g | T: 9,0 g | W: 18,5 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">4. Zapiekany wrap z łososiem wędzonym i szpinakiem</span><span class="meal-action">3 min Airfryer/grill</span></div>
+      <div class="recipe-text">Tortilla pełnoziarnista, serek kanapkowy (40 g), łosoś wędzony (60 g), świeży szpinak.</div>
+      <div class="macro-strip">365 kcal | B: 24,0 g | T: 13,5 g | W: 36,0 g</div>
+    </div>
+  </div>
+
+  <!-- CZWARTEK -->
+  <div class="day-card">
+    <div class="day-header"><span class="day-name">Czwartek</span></div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">1. Nocna chia-owsianka z malinami i Skyrem</span><span class="meal-action">Gotowe ze słoika</span></div>
+      <div class="recipe-text">Płatki owsiane (35 g), nasiona chia (5 g), Skyr naturalny (150 g), mrożone maliny (50 g), 50 ml mleka.</div>
+      <div class="macro-strip">310 kcal | B: 23,5 g | T: 4,0 g | W: 44,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">2. Pieczony indyk z ziemniakami i brokułami (2/2)</span><span class="meal-action">Airfryer 3 min / Mikrofala</span></div>
+      <div class="recipe-text">Upieczony indyk (180 g), upieczone ziemniaki (200 g), pieczony brokuł (100 g), oliwa (1 łyżeczka).</div>
+      <div class="macro-strip">410 kcal | B: 44,0 g | T: 7,5 g | W: 41,0 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">3. Serek wiejski lekki z orzechami i cynamonem</span><span class="meal-action">Jesz z kubeczka</span></div>
+      <div class="recipe-text">Serek wiejski lekki (200 g), orzechy włoskie (15 g), szczypta cynamonu.</div>
+      <div class="macro-strip">260 kcal | B: 24,5 g | T: 12,0 g | W: 5,5 g</div>
+    </div>
+    <div class="meal-block">
+      <div class="meal-meta"><span class="meal-name">4. Ciepła tortilla z szynką indyczą, serem i szpinakiem</span><span class="meal-action">3 min Airfryer/grill</span></div>
+      <div class="recipe-text">Tortilla pełnoziarnista, szynka z indyka (50 g), ser gouda light (40 g), szpinak + gotowe słupki ogórka.</div>
+      <div class="macro-strip">365 kcal | B: 29,0 g | T: 10,5 g | W: 36,0 g</div>
+    </div>
+  </div>
+</div>
+
+<button class="action-btn" onclick="window.print()">Pobierz jako PDF / Drukuj</button>
+
+</body>
+</html>
